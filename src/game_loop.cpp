@@ -87,7 +87,9 @@ int game_loop(int term_height, int term_width) {
 					box(game_win, 0, 0);
 					wrefresh(game_win);
 				} else if (highlight == 1) {
+					nodelay(game_win, FALSE);
 					show_stats(game_win, kingdom, win_width);
+					nodelay(game_win, TRUE);
 				} else if (highlight == 2) {
 					werase(game_win);
 					wrefresh(game_win);
@@ -101,6 +103,13 @@ int game_loop(int term_height, int term_width) {
 				} else {
 					gameTime.pauseFalse();
 				}
+				break;
+			case KEY_RIGHT: 
+				if (elapsed.count() >= 1) {
+				gameTime.advanceTime();
+				lastTick = now;
+				break;
+			}
 		}
 	}
 
