@@ -32,7 +32,7 @@ int game_loop(int term_height, int term_width) {
 
 	Economy economy(1000, 100, 50);
 	Kingdom kingdom("My Kingdom", economy);
-	Time gameTime(1, 1, 1000);
+	Time gameTime(1, 1, 1000, false);
 
 	std::vector<std::string> options = {"Manage an economy", "Show stats", "Exit to the menu"};
 	int highlight = 0;
@@ -45,6 +45,11 @@ int game_loop(int term_height, int term_width) {
 
 		std::string dateString = gameTime.getDateString();
 		mvwprintw(game_win, win_height - 2, 2, "%s", dateString.c_str());
+
+		if (gameTime.getPause()) {
+			mvwprintw(game_win, win_height - 3, 2, "[PAUSED]");
+		}
+
 		for (int i = 0; i < options.size(); i++) {
 			if (i == highlight) {
 				wattron(game_win, A_REVERSE);
@@ -90,6 +95,12 @@ int game_loop(int term_height, int term_width) {
 					return 0;
 				}
 				break;
+			case 32:
+				if (gameTime.getPause() == false) {
+					gameTime.pauseTrue();
+				} else {
+					gameTime.pauseFalse();
+				}
 		}
 	}
 

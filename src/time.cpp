@@ -2,7 +2,7 @@
 
 using std::array;
 
-Time::Time(int d, int m, int y) : day(d), month(m), year(y) {}
+Time::Time(int d, int m, int y, bool p) : day(d), month(m), year(y),  pauseTime(p){}
 
 const array<std::string, 12> Time::monthNames = {
     "January", "February", "March",     "April",   "May",      "June",
@@ -22,15 +22,25 @@ void Time::advanceYear() {
 }
 
 void Time::advanceTime() {
-	advanceDay();
-	if (day > 30) {
-		advanceMonth();
-		day = 1;
+	if (pauseTime == false) {
+		advanceDay();
+		if (day > 30) {
+			advanceMonth();
+			day = 1;
+		}
+		if (month > 12) {
+			advanceYear();
+			month = 1;
+		}
 	}
-	if (month > 12) {
-		advanceYear();
-		month = 1;
-	}
+}
+
+void Time::pauseFalse() {
+	pauseTime = false;
+}
+
+void Time::pauseTrue() {
+	pauseTime = true;
 }
 
 std::string Time::getDateString() {
@@ -53,4 +63,6 @@ int Time::getYear() const {
 	return year;
 }
 
-
+bool Time::getPause() const {
+	return pauseTime;
+}
