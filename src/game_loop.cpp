@@ -2,9 +2,11 @@
 #include "../includes/ui.hpp"
 #include "../includes/kingdom.hpp"
 #include "../includes/economy.hpp"
+#include "../includes/time.hpp"
 #include <ncurses.h>
 #include <vector>
 #include <string>
+#include <chrono>
 
 void show_stats(WINDOW* win, Kingdom& kingdom, int width) {
 	werase(win);
@@ -25,19 +27,24 @@ int game_loop(int term_height, int term_width) {
 	WINDOW *game_win = newwin(win_height, win_width, start_y, start_x);
 	box(game_win, 0, 0);
 	keypad(game_win, TRUE);
+	nodelay(game_win, TRUE);
 	wrefresh(game_win);
 
 	Economy economy(1000, 100, 50);
 	Kingdom kingdom("My Kingdom", economy);
+	Time gameTime(1, 1, 1000);
 
 	std::vector<std::string> options = {"Manage an economy", "Show stats", "Exit to the menu"};
 	int highlight = 0;
 	int option;
+	auto lastTick = std::chrono::steady_clock::now();
 
 	while(true) {
 		werase(game_win);
 		box(game_win, 0, 0);
 
+		std::string dateString = gameTime.getDateString();
+		mvwprintw(game_win, win_height - 2, 2, "%s", dateString.c_str());
 		for (int i = 0; i < options.size(); i++) {
 			if (i == highlight) {
 				wattron(game_win, A_REVERSE);
@@ -46,6 +53,13 @@ int game_loop(int term_height, int term_width) {
 			wattroff(game_win, A_REVERSE);
 		}
 		wrefresh(game_win);
+
+		auto now = std::chrono::steady_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTick);
+		if (elapsed.count() >= 1000) {
+			gameTime.advanceTime();
+			lastTick = now;
+		}
 
 		option = wgetch(game_win);
 		switch(option) {
