@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <thread>
 
 void show_stats(WINDOW* win, Kingdom& kingdom, int width) {
 	werase(win);
@@ -32,12 +33,14 @@ int game_loop(int term_height, int term_width) {
 
 	Economy economy(1000, 100, 50);
 	Kingdom kingdom("My Kingdom", economy);
-	Time gameTime(1, 1, 1000, false);
+	Time gameTime(1, 1, 1000, false, 1.0);
 
 	std::vector<std::string> options = {"Manage an economy", "Show stats", "Exit to the menu"};
 	int highlight = 0;
 	int option;
 	auto lastTick = std::chrono::steady_clock::now();
+	double tickAccumulator = 0.0;
+	const int tickDuration = 1000;
 
 	while(true) {
 		werase(game_win);
@@ -45,6 +48,9 @@ int game_loop(int term_height, int term_width) {
 
 		std::string dateString = gameTime.getDateString();
 		mvwprintw(game_win, win_height - 2, 2, "%s", dateString.c_str());
+
+		std::string scaleString = "Speed: " + std::to_string(static_cast<int>(gameTime.getTimeScale())) + "x";
+		mvwprintw(game_win, win_height - 4, 2, "%s", scaleString.c_str());
 
 		if (gameTime.getPause()) {
 			mvwprintw(game_win, win_height - 3, 2, "[PAUSED]");
@@ -61,10 +67,16 @@ int game_loop(int term_height, int term_width) {
 
 		auto now = std::chrono::steady_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTick);
-		if (elapsed.count() >= 1000) {
-			gameTime.advanceTime();
-			lastTick = now;
+		tickAccumulator += elapsed.count() * gameTime.getTimeScale();
+
+		while (tickAccumulator >= tickDuration) {
+			if (!gameTime.getPause()) {
+				gameTime.advanceDay();
+			}
+			tickAccumulator -= tickDuration;
 		}
+		lastTick = now;
+
 
 		option = wgetch(game_win);
 		switch(option) {
@@ -104,13 +116,14 @@ int game_loop(int term_height, int term_width) {
 					gameTime.pauseFalse();
 				}
 				break;
-			case KEY_RIGHT: 
-				if (elapsed.count() >= 1) {
-				gameTime.advanceTime();
-				lastTick = now;
+			case KEY_RIGHT:
+				gameTime.increaseTimeScale();
 				break;
-			}
+			case KEY_LEFT:
+				gameTime.decreaseTimeScale();
+				break;	
 		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
 }
