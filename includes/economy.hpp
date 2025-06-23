@@ -5,20 +5,20 @@
 
 class Economy {
 	private:
-		int denars;
-		int income;
-		int expenses;
+		float denars;
+		float income;
+		float expenses;
 	public:
-		Economy(int denars, int income, int expenses);
+		Economy(float denars, float income, float expenses);
 
-		void addIncome(int amount);
-		void addExpense(int amount);
+		void addIncome(float amount);
+		void addExpense(float amount);
 		void updateMonthly();
 
-		int getDenars() const;
-		int getIncome() const;
-		int getExpenses() const;
-		void takeLoan(int amount);
+		float getDenars() const;
+		float getIncome() const;
+		float getExpenses() const;
+		void takeLoan(float amount);
 };
 
 

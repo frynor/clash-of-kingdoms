@@ -3,6 +3,7 @@
 #include "../includes/kingdom.hpp"
 #include "../includes/economy.hpp"
 #include "../includes/time.hpp"
+#include "../includes/province.hpp"
 #include <ncurses.h>
 #include <vector>
 #include <string>
@@ -13,7 +14,8 @@ void show_stats(WINDOW* win, Kingdom& kingdom, int width) {
 	werase(win);
 	box(win, 0, 0);
 	
-	center_text(win, 1, kingdom.displayStats().c_str(), width);
+	center_text(win, 1, kingdom.displayDenars().c_str(), width);
+	center_text(win, 2, kingdom.displayProvinces().c_str(), width);
 	center_text(win, 3, "Press any key to return", width);
 	wrefresh(win);
 	wgetch(win);
@@ -31,8 +33,15 @@ int game_loop(int term_height, int term_width) {
 	nodelay(game_win, TRUE);
 	wrefresh(game_win);
 
+	// Creating several provinces
+	std::vector<Province> provinces = {
+		Province("Ingria", 57500),
+		Province("Bergen", 67500),
+		Province("Nordphalia", 19900)
+	};
+
 	Economy economy(1000, 100, 50);
-	Kingdom kingdom("My Kingdom", economy);
+	Kingdom kingdom("My Kingdom", economy, provinces);
 	Time gameTime(1, 1, 1000, false, 1.0);
 
 	std::vector<std::string> options = {"Manage an economy", "Show stats", "Exit to the menu"};
@@ -77,6 +86,11 @@ int game_loop(int term_height, int term_width) {
 		}
 		lastTick = now;
 
+		static int lastTaxMonth = 0;
+		if (gameTime.getDay() == 1 && gameTime.getMonth() != lastTaxMonth) {
+			kingdom.collectIncome();
+			lastTaxMonth = gameTime.getMonth();
+		}	
 
 		option = wgetch(game_win);
 		switch(option) {

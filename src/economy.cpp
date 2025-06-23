@@ -1,33 +1,35 @@
 #include "../includes/economy.hpp"
 
-Economy::Economy(int d, int i, int e) : denars(d), income(i), expenses(e) {}
+Economy::Economy(float d, float i, float e) : denars(d), income(i), expenses(e) {}
 
-void Economy::addIncome(int amount) {
+void Economy::addIncome(float amount) {
 	income += amount;
 }
 
-void Economy::addExpense(int amount) {
+void Economy::addExpense(float amount) {
 	expenses += amount;
 }
 
-int Economy::getIncome() const {
+float Economy::getIncome() const {
 	return income;
 }
 
-int Economy::getDenars() const {
+float Economy::getDenars() const {
 	return denars;
 }
 
-int Economy::getExpenses() const {
+float Economy::getExpenses() const {
 	return expenses;
 }
 
-void Economy::takeLoan(int amount) {
+void Economy::takeLoan(float amount) {
 	denars += amount; 
 }
 
 void Economy::updateMonthly() {
 	denars += income - expenses;
+	income = 0.0f;
+	expenses = 0.0f;
 }
 
 

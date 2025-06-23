@@ -1,18 +1,33 @@
 #include "../includes/kingdom.hpp"
 #include "../includes/ui.hpp"
+#include "../includes/province.hpp"
 #include <iostream>
 #include <ncurses.h>
 #include <string>
 #include <vector>
+#include <sstream>
 
-Kingdom::Kingdom(std::string n, Economy e) : name(n), economy(e) {}
+Kingdom::Kingdom(std::string n, Economy e, std::vector<Province> p) : name(n), economy(e), provinces(p) {}
 
-void Kingdom::collectTaxes() {
+void Kingdom::collectIncome() {
+	float totalIncome = 0;
+	for (Province& p : provinces) {
+		totalIncome += p.updateIncome();
+	}
+	economy.addIncome(totalIncome);
 	economy.updateMonthly();
 }
 
-std::string Kingdom::displayStats() const {
-	return "Denars: " + std::to_string(economy.getDenars()); 
+std::string Kingdom::displayDenars() const {
+	std::ostringstream oss;
+	oss.precision(2);
+	oss << std::fixed;
+	oss << "Denars: " << economy.getDenars();
+	return oss.str();
+}
+
+std::string Kingdom::displayProvinces() const {
+	return "Provinces: " + std::to_string(provinces.size());
 }
 
 void Kingdom::manageEconomy() {
@@ -78,4 +93,8 @@ void Kingdom::manageEconomy() {
 	werase(eco_win);
 	wrefresh(eco_win);
 	delwin(eco_win);
+}
+
+Economy& Kingdom::getEconomy() {
+	return economy;
 }
