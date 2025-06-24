@@ -35,9 +35,11 @@ int game_loop(int term_height, int term_width) {
 
 	// Creating several provinces
 	std::vector<Province> provinces = {
-		Province("Ingria", 57500),
-		Province("Bergen", 67500),
-		Province("Nordphalia", 19900)
+		Province("Zatahania", 41400),
+		Province("Pekhla", 77500),
+		Province("Okinas", 59700),
+		Province("Daario", 26500),
+		Province("Asshai", 87300)
 	};
 
 	Economy economy(1000, 100, 50);
@@ -108,7 +110,7 @@ int game_loop(int term_height, int term_width) {
 				break;
 			case 10:
 				if (highlight == 0) {
-					kingdom.manageEconomy();
+					kingdom.manageProvinces();
 					werase(game_win);
 					box(game_win, 0, 0);
 					wrefresh(game_win);

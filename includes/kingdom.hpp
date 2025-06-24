@@ -19,6 +19,7 @@ class Kingdom {
 		std::string displayDenars() const;
 		std::string displayProvinces() const;
 		void manageEconomy();
+		void manageProvinces();
 };
 
 #endif

@@ -10,15 +10,16 @@ class Province {
 	private:
 		std::string name;
 		float income;
-		float population;
+		int population;
 	public:
-		Province(std::string name, float population);
+		Province(std::string name, int population);
 		void setName(std::string n);
-		void setPopulation(float p);
+		void setPopulation(int p);
 		float updateIncome();
 		std::string getName() const;
 		float getIncome() const;
-		float getPopulation() const;
+		int getPopulation() const;
+		void manageProvinces();
 };
 
 #endif // PROVINCE_HPP

@@ -1,6 +1,10 @@
 #include "../includes/province.hpp"
+#include "../includes/ui.hpp"
+#include <ncurses.h>
+#include <vector>
+#include <string>
 
-Province::Province(std::string n, float p) : name(n), population(p) {}
+Province::Province(std::string n, int p) : name(n), population(p) {}
 
 void Province::setName(std::string n) {
 	name = n;
@@ -11,7 +15,7 @@ float Province::updateIncome() {
 	return income;
 }
 
-void Province::setPopulation(float p) {
+void Province::setPopulation(int p) {
 	population = p;
 }
 
@@ -23,6 +27,7 @@ float Province::getIncome() const {
 	return income;
 }
 
-float Province::getPopulation() const {
+int Province::getPopulation() const {
 	return population;
 }
+

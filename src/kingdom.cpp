@@ -98,3 +98,78 @@ void Kingdom::manageEconomy() {
 Economy& Kingdom::getEconomy() {
 	return economy;
 }
+
+void Kingdom::manageProvinces() {
+	int win_height = 40, win_width = 80;
+	int term_height, term_width;
+	getmaxyx(stdscr, term_height, term_width);
+	int start_y = (term_height - win_height) / 2;
+	int start_x = (term_width - win_width) / 2;
+
+	WINDOW *prov_win = newwin(win_height, win_width, start_y, start_x);
+	box(prov_win, 0, 0);
+	keypad(prov_win, TRUE);
+	wrefresh(prov_win);
+
+	int highlight = 0;        // Which province
+	int actionHighlight = 0;  // 0 = "+", 1 = "-"
+
+	while (true) {
+		werase(prov_win);
+		box(prov_win, 0, 0);
+
+		for (int i = 0; i < provinces.size(); ++i) {
+			int y = 2 + i * 3;
+			std::string text = provinces[i].getName() + " - Population: " + std::to_string(provinces[i].getPopulation());
+			mvwprintw(prov_win, y, 2, "%s", text.c_str());
+
+			// Draw + and - next to the province
+			if (i == highlight) {
+				if (actionHighlight == 0) wattron(prov_win, A_REVERSE);
+				mvwprintw(prov_win, y, win_width - 10, "+");
+				if (actionHighlight == 0) wattroff(prov_win, A_REVERSE);
+
+				if (actionHighlight == 1) wattron(prov_win, A_REVERSE);
+				mvwprintw(prov_win, y, win_width - 8, "-");
+				if (actionHighlight == 1) wattroff(prov_win, A_REVERSE);
+			} else {
+				mvwprintw(prov_win, y, win_width - 10, "+");
+				mvwprintw(prov_win, y, win_width - 8, "-");
+			}
+		}
+
+		center_text(prov_win, win_height - 3, "Arrow keys to navigate, ENTER to apply, ESC to return", win_width);
+		wrefresh(prov_win);
+
+		int ch = wgetch(prov_win);
+		switch (ch) {
+			case KEY_UP:
+				highlight = (highlight - 1 + provinces.size()) % provinces.size();
+				break;
+			case KEY_DOWN:
+				highlight = (highlight + 1) % provinces.size();
+				break;
+			case KEY_LEFT:
+				actionHighlight = (actionHighlight == 0) ? 1 : 0;
+				break;
+			case KEY_RIGHT:
+				actionHighlight = (actionHighlight == 0) ? 1 : 0;
+				break;
+			case 10: { // ENTER
+				int pop = provinces[highlight].getPopulation();
+				if (actionHighlight == 0) {
+					provinces[highlight].setPopulation(pop + 1000);
+				} else {
+					if (pop > 1000) provinces[highlight].setPopulation(pop - 1000);
+				}
+				break;
+			}
+			case 27: // ESC
+				werase(prov_win);
+				wrefresh(prov_win);
+				delwin(prov_win);
+				return;
+		}
+	}
+}
+
