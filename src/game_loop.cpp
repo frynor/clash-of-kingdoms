@@ -10,6 +10,7 @@
 #include <chrono>
 #include <thread>
 
+
 void show_stats(WINDOW* win, Kingdom& kingdom, int width) {
 	werase(win);
 	box(win, 0, 0);
@@ -22,6 +23,10 @@ void show_stats(WINDOW* win, Kingdom& kingdom, int width) {
 }
 
 int game_loop(int term_height, int term_width) {
+	if (stdscr == nullptr) {
+		initscr();
+	}
+
 	int win_height = 40;
 	int win_width = 80;
 	int start_y = (term_height - win_height) / 2;

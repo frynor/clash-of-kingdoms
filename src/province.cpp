@@ -4,14 +4,16 @@
 #include <vector>
 #include <string>
 
-Province::Province(std::string n, int p) : name(n), population(p) {}
+Province::Province(std::string n, int p) : name(n), population(p) {
+	updateIncome();
+}
 
 void Province::setName(std::string n) {
 	name = n;
 }
 
 float Province::updateIncome() {
-	income = population * 0.00001f;
+	income = population * incomeMultiplier;
 	return income;
 }
 
@@ -31,11 +33,20 @@ int Province::getPopulation() const {
 	return population;
 }
 
-void Province::setIncome(float p) {
-	income = p;
-	if (p > 0.00005f) {
-		p = 0.00005f;
-	} else if (p < 0.00001f) {
-		p = 0.00001f;
+void Province::increaseMultiplier() {
+	if (incomeMultiplier < 0.00005f) {
+		incomeMultiplier += 0.00001f;
+		updateIncome();
 	}
+}
+
+void Province::decreaseMultiplier() {
+	if (incomeMultiplier > 0.00001f) {
+		incomeMultiplier -= 0.00001f;
+		updateIncome();
+	}
+}
+
+float Province::getMultiplier() const {
+	return incomeMultiplier;
 }

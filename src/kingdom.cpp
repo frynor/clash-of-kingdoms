@@ -1,6 +1,7 @@
 #include "../includes/kingdom.hpp"
 #include "../includes/ui.hpp"
 #include "../includes/province.hpp"
+#include <iomanip>
 #include <iostream>
 #include <ncurses.h>
 #include <string>
@@ -120,7 +121,9 @@ void Kingdom::manageProvinces() {
 
 		for (int i = 0; i < provinces.size(); ++i) {
 			int y = 2 + i * 3;
-			std::string text = provinces[i].getName() + " - Population: " + std::to_string(provinces[i].getPopulation()) + ", Income: " + std::to_string(provinces[i].getIncome());
+			std::ostringstream oss;
+			oss << provinces[i].getName() << " - Population: " << provinces[i].getPopulation() << ", Income: " << std::fixed << std::setprecision(2) << provinces[i].getIncome();
+			std::string text = oss.str();
 			mvwprintw(prov_win, y, 2, "%s", text.c_str());
 
 			// Draw + and - next to the province
@@ -157,12 +160,10 @@ void Kingdom::manageProvinces() {
 				break;
 			case 10: { // ENTER
 				int pop = provinces[highlight].getPopulation();
-				int income = provinces[highlight].getIncome();
 				if (actionHighlight == 0) {
-					provinces[highlight].setPopulation(pop + 1000);
-					provinces[highlight].setIncome(income + 0.00001f);
+					provinces[highlight].increaseMultiplier();
 				} else {
-					if (pop > 1000) provinces[highlight].setPopulation(pop - 1000);
+					provinces[highlight].decreaseMultiplier();
 				}
 				break;
 			}
