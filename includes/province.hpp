@@ -15,6 +15,7 @@ class Province {
 		Province(std::string name, int population);
 		void setName(std::string n);
 		void setPopulation(int p);
+		void setIncome(float i);
 		float updateIncome();
 		std::string getName() const;
 		float getIncome() const;

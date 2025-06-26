@@ -31,3 +31,11 @@ int Province::getPopulation() const {
 	return population;
 }
 
+void Province::setIncome(float p) {
+	income = p;
+	if (p > 0.00005f) {
+		p = 0.00005f;
+	} else if (p < 0.00001f) {
+		p = 0.00001f;
+	}
+}
